@@ -375,6 +375,7 @@ class RasterLayerParser(object):
                 # Store tile in batch array
                 batch.append(
                     RasterTile(
+                        id='{0}-{1}-{2}-{3}'.format(self.rasterlayer.id, zoom, tilex, tiley),
                         rast=dest,
                         rasterlayer_id=self.rasterlayer.id,
                         tilex=tilex,

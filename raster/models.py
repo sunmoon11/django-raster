@@ -380,12 +380,21 @@ class RasterTile(models.Model):
         (8, 8), (9, 9), (10, 10), (11, 11), (12, 12), (13, 13),
         (14, 14), (15, 15), (16, 16), (17, 17), (18, 18)
     )
-    rid = models.AutoField(primary_key=True)
-    rast = models.RasterField(null=True, blank=True, srid=WEB_MERCATOR_SRID)
-    rasterlayer = models.ForeignKey(RasterLayer, null=True, blank=True, db_index=True)
-    tilex = models.IntegerField(db_index=True, null=True)
-    tiley = models.IntegerField(db_index=True, null=True)
-    tilez = models.IntegerField(db_index=True, null=True, choices=ZOOMLEVELS)
+    id = models.TextField(primary_key=True)
+    rast = models.RasterField(srid=WEB_MERCATOR_SRID)
+    rasterlayer = models.ForeignKey(RasterLayer, db_index=True)
+    tilex = models.IntegerField(db_index=True)
+    tiley = models.IntegerField(db_index=True)
+    tilez = models.IntegerField(db_index=True, choices=ZOOMLEVELS)
 
     def __str__(self):
         return '{} {}'.format(self.rid, self.rasterlayer.name)
+
+    def save(self, *args, **kwargs):
+        self.id = '{0}-{1}-{2}-{3}'.format(
+            self.rasterlayer_id,
+            self.zoom,
+            self.tilex,
+            self.tiley,
+        )
+        super(RasterTile, self).save(*args, **kwargs)
