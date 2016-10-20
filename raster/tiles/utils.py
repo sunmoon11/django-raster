@@ -23,11 +23,11 @@ def get_raster_tile(layer_id, tilez, tilex, tiley):
         # Compute multiplier to find parent raster
         multiplier = 2 ** (tilez - zoom)
         # Fetch tile
-        tile = RasterTile.objects.filter(
+        tile = RasterTile.objects.filter_by_pk(
             tilex=tilex / multiplier,
             tiley=tiley / multiplier,
             tilez=zoom,
-            rasterlayer_id=layer_id
+            rasterlayer_id=layer_id,
         )
 
         if tile.exists():

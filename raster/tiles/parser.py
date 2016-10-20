@@ -17,6 +17,7 @@ from django.core.files import File
 from django.dispatch import Signal
 from django.utils.six.moves.urllib.parse import urlparse
 from django.utils.six.moves.urllib.request import urlretrieve
+from raster.const import PK_FORMAT
 from raster.exceptions import RasterException
 from raster.models import RasterLayer, RasterLayerBandMetadata, RasterLayerReprojected, RasterTile
 from raster.tiles import utils
@@ -373,9 +374,10 @@ class RasterLayerParser(object):
                 })
 
                 # Store tile in batch array
+                pk = PK_FORMAT.format(layer=self.rasterlayer.id, tilez=zoom, tilex=tilex, tiley=tiley)
                 batch.append(
                     RasterTile(
-                        id='{0}-{1}-{2}-{3}'.format(self.rasterlayer.id, zoom, tilex, tiley),
+                        id=pk,
                         rast=dest,
                         rasterlayer_id=self.rasterlayer.id,
                         tilex=tilex,

@@ -13,6 +13,7 @@ from django.contrib.postgres.fields import ArrayField
 from django.db.models import Max, Min
 from django.db.models.signals import post_delete, post_save, pre_save
 from django.dispatch import receiver
+from raster.const import PK_FORMAT
 from raster.mixins import ValueCountMixin
 from raster.tiles.const import WEB_MERCATOR_SRID
 from raster.utils import hex_to_rgba
@@ -371,6 +372,33 @@ class RasterLayerBandMetadata(models.Model):
         return (self.min, self.max, self.mean, self.std)
 
 
+class RasterTileManager(models.Manager):
+    """
+    A manager with wrapper functions that filter on the primary key based on
+    the input parameters, instead of the individual column values directly.
+
+    This is useful for sharded databases, which can be sharded by the
+    verbose primary key.
+    """
+    def filter_by_pk(self, rasterlayer_id, tilez, tilex, tiley):
+        pk = PK_FORMAT.format(
+            layer=rasterlayer_id,
+            tilez=int(tilez),
+            tilex=int(tilex),
+            tiley=int(tiley),
+        )
+        return self.filter(id=pk)
+
+    def get_by_pk(self, rasterlayer_id, tilez, tilex, tiley):
+        pk = PK_FORMAT.format(
+            layer=rasterlayer_id,
+            tilez=int(tilez),
+            tilex=int(tilex),
+            tiley=int(tiley),
+        )
+        return self.get(id=pk)
+
+
 class RasterTile(models.Model):
     """
     Store individual tiles of a raster data source layer.
@@ -387,14 +415,19 @@ class RasterTile(models.Model):
     tiley = models.IntegerField(db_index=True)
     tilez = models.IntegerField(db_index=True, choices=ZOOMLEVELS)
 
+    objects = RasterTileManager()
+
     def __str__(self):
         return '{} {}'.format(self.rid, self.rasterlayer.name)
 
     def save(self, *args, **kwargs):
-        self.id = '{0}-{1}-{2}-{3}'.format(
-            self.rasterlayer_id,
-            self.zoom,
-            self.tilex,
-            self.tiley,
-        )
+        self.id = self.construct_pk()
         super(RasterTile, self).save(*args, **kwargs)
+
+    def construct_pk(self):
+        return PK_FORMAT.format(
+            layer=self.rasterlayer_id,
+            tilez=self.tilez,
+            tilex=self.tilex,
+            tiley=self.tiley,
+        )
