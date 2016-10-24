@@ -411,7 +411,8 @@ class RasterLayerParser(object):
         Delete all existing tiles for this parser's rasterlayer.
         """
         self.log('Clearing all existing tiles.')
-        self.rasterlayer.rastertile_set.all().delete()
+        for tile in self.rasterlayer.rastertile_set.all().only('id').iterator():
+            tile.delete()
         self.log('Finished clearing existing tiles.')
 
     def send_success_signal(self):
