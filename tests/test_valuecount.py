@@ -38,11 +38,6 @@ class RasterValueCountTests(RasterTestCase):
             self.rasterlayer.value_count(bbox),
             {str(key): val for key, val in self.expected_totals.items()}
         )
-        # Drop nodata value from expected data
-        self.assertEqual(
-            self.rasterlayer.db_value_count(bbox),
-            self.expected_totals
-        )
 
     def test_value_count_with_geom_covering_single_tile(self):
         # Get extent from single tile
@@ -69,11 +64,6 @@ class RasterValueCountTests(RasterTestCase):
         self.assertEqual(
             self.rasterlayer.value_count(bbox),
             {str(k): v for k, v in expected.items()}
-        )
-        # For db based counts, remove nodata
-        self.assertEqual(
-            self.rasterlayer.db_value_count(bbox),
-            expected
         )
 
     def test_area_calculation_with_geom_covering_single_tile(self):
@@ -119,10 +109,6 @@ class RasterValueCountTests(RasterTestCase):
         self.assertEqual(
             self.rasterlayer.value_count(zoom=9),
             {str(k): v for k, v in expected.items()}
-        )
-        self.assertEqual(
-            self.rasterlayer.db_value_count(zoom=9),
-            expected
         )
 
     @skipUnless(sys.version_info[:2] == (3, 5), 'The rounding of the continous histogram breaks depends on the python version')
