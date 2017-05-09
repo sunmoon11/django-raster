@@ -20,7 +20,10 @@ before_script:
 
 install:
   - pip install https://github.com/geodesign/django/archive/geodesign_v7.tar.gz
+<<<<<<< bc0b19fa0ab8254335dd4a6ff2a2656b5185c69a
   - pip install -e .
+=======
+>>>>>>> Added merge migration after rebase from master.
   - pip install psycopg2==2.7.1
   - pip install flake8==3.3.0
   - pip install isort==4.2.2
