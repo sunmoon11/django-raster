@@ -130,3 +130,9 @@ class RasterAlgebraViewTests(RasterTestCase):
     def test_rgb_request(self):
         response = self.client.get(self.algebra_tile_url + '?layers=r={0},g={0},b={0}'.format(self.rasterlayer.id))
         self.assertEqual(response.status_code, 200)
+
+    def test_tif_request(self):
+        response = self.client.get(self.algebra_tile_url.split('.')[0] + '.tif?layers=a={0}&formula=a'.format(self.rasterlayer.id))
+        self.assertEqual(response['Content-type'], 'image/tiff')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsExpectedTile(response.content, 'test_tms_tif_format', frmt='tif')
