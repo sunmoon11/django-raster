@@ -20,10 +20,10 @@ before_script:
 
 install:
   - pip install https://github.com/geodesign/django/archive/geodesign_v9.tar.gz
+  - pip install -e .
   - pip install psycopg2==2.7.3.2
   - pip install flake8==3.5.0
   - pip install isort==4.2.15
-  - pip install psycopg2==2.7.1
   - pip install flake8==3.3.0
   - pip install isort==4.2.2
   - pip install coverage==4.4
