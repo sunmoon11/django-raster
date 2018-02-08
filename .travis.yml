@@ -19,7 +19,6 @@ before_script:
   - psql -c 'create extension postgis' -U postgres -d raster_test
 
 install:
-  - pip install https://github.com/geodesign/django/archive/geodesign_v9.tar.gz
   - pip install -e .
   - pip install psycopg2==2.7.3.2
   - pip install flake8==3.5.0
